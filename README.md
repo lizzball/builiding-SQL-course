@@ -6,7 +6,7 @@ Think: a simplified LifeLabs-style data environment built for learning SQL. No r
 
 ## Database structure
 
-The practice database contains three related tables:
+The practice database contains **1,000 synthetic patients**, **1,000 lab tests**, and 12 synthetic ordering physicians across three related tables:
 
 - `patients` — synthetic patient demographics
 - `ordering_doctors` — synthetic ordering physicians
@@ -27,7 +27,7 @@ All biomarker values are numeric and constrained to **20–35**.
 
 ### Intentional signal
 
-This is not random noise. The dataset was designed so that:
+This is not random noise. The 1,000-patient cohort was designed so that:
 
 - **Biomarker A is associated with disease status**: disease cases tend to have lower values.
 - Biomarkers B and C have much more overlap between cases and controls.
