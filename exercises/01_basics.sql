@@ -8,30 +8,34 @@
 -- .headers on
 -- .mode column
 
--- 1. Return every customer.
+-- 1. Return every laboratory test.
 SELECT *
-FROM customers;
+FROM lab_tests;
 
--- 2. TODO: Return only first_name, last_name, and city.
-
-
--- 3. TODO: Find all customers from Ontario (ON).
+-- 2. TODO: Return only test_id, patient_id, biomarker_a,
+-- biomarker_b, and biomarker_c.
 
 
--- 4. TODO: Find products that cost more than $50.
+-- 3. TODO: Return only patients with disease_status = 'disease'.
 
 
--- 5. TODO: Sort products from highest price to lowest price.
+-- 4. TODO: Find tests where biomarker_a is below 27.
 
 
--- 6. TODO: Return the three most expensive products.
+-- 5. TODO: Sort all tests from LOWEST biomarker_a
+-- to HIGHEST biomarker_a.
 
 
--- 7. TODO: Find all completed orders.
+-- 6. TODO: Return the five tests with the lowest biomarker_a.
 
 
--- 8. TODO: Find orders placed on or after July 1, 2026.
+-- 7. TODO: Find tests collected on or after June 1, 2026.
+
+
+-- 8. TODO: Find disease cases where biomarker_a is greater than 28.
+-- These are interesting because Biomarker A tends to be lower in disease.
 
 
 -- CHALLENGE
--- Which customers live in Hamilton or Toronto?
+-- Find control samples with biomarker_a below 27.
+-- Why might these matter if you were using A as a diagnostic threshold?
