@@ -1,0 +1,13 @@
+{
+  "name": "Building SQL Course",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y sqlite3 && sqlite3 practice.db < data/create_database.sql",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "mtxr.sqltools",
+        "mtxr.sqltools-driver-sqlite"
+      ]
+    }
+  }
+}
