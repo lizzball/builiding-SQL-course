@@ -1,129 +1,145 @@
 PRAGMA foreign_keys = ON;
 
-DROP TABLE IF EXISTS order_items;
-DROP TABLE IF EXISTS orders;
-DROP TABLE IF EXISTS products;
-DROP TABLE IF EXISTS customers;
+DROP TABLE IF EXISTS lab_tests;
+DROP TABLE IF EXISTS patients;
+DROP TABLE IF EXISTS ordering_doctors;
 
-CREATE TABLE customers (
-    customer_id INTEGER PRIMARY KEY,
-    first_name TEXT NOT NULL,
-    last_name TEXT NOT NULL,
-    city TEXT NOT NULL,
-    province TEXT NOT NULL,
-    signup_date DATE NOT NULL
+-- Fully synthetic diagnostic-lab database.
+-- No row represents a real patient, physician, or test result.
+
+CREATE TABLE patients (
+    patient_id INTEGER PRIMARY KEY,
+    age INTEGER NOT NULL,
+    sex TEXT NOT NULL CHECK (sex IN ('F', 'M')),
+    province TEXT NOT NULL
 );
 
-CREATE TABLE products (
-    product_id INTEGER PRIMARY KEY,
-    product_name TEXT NOT NULL,
-    category TEXT NOT NULL,
-    unit_price REAL NOT NULL
-);
-
-CREATE TABLE orders (
+-- For this learning database, order_id identifies the ordering physician.
+CREATE TABLE ordering_doctors (
     order_id INTEGER PRIMARY KEY,
-    customer_id INTEGER NOT NULL,
-    order_date DATE NOT NULL,
-    status TEXT NOT NULL,
-    FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+    doctor_name TEXT NOT NULL,
+    specialty TEXT NOT NULL,
+    city TEXT NOT NULL
 );
 
-CREATE TABLE order_items (
-    order_item_id INTEGER PRIMARY KEY,
+CREATE TABLE lab_tests (
+    test_id TEXT PRIMARY KEY,
+    patient_id INTEGER NOT NULL,
     order_id INTEGER NOT NULL,
-    product_id INTEGER NOT NULL,
-    quantity INTEGER NOT NULL,
-    unit_price REAL NOT NULL,
-    FOREIGN KEY (order_id) REFERENCES orders(order_id),
-    FOREIGN KEY (product_id) REFERENCES products(product_id)
+    collection_date DATE NOT NULL,
+    disease_status TEXT NOT NULL CHECK (disease_status IN ('control', 'disease')),
+    biomarker_a REAL NOT NULL CHECK (biomarker_a BETWEEN 20 AND 35),
+    biomarker_b REAL NOT NULL CHECK (biomarker_b BETWEEN 20 AND 35),
+    biomarker_c REAL NOT NULL CHECK (biomarker_c BETWEEN 20 AND 35),
+    FOREIGN KEY (patient_id) REFERENCES patients(patient_id),
+    FOREIGN KEY (order_id) REFERENCES ordering_doctors(order_id)
 );
 
-INSERT INTO customers
-(customer_id, first_name, last_name, city, province, signup_date)
+INSERT INTO ordering_doctors
+(order_id, doctor_name, specialty, city)
 VALUES
-(1, 'Maya', 'Chen', 'Toronto', 'ON', '2025-01-14'),
-(2, 'Jonah', 'Singh', 'Hamilton', 'ON', '2025-02-03'),
-(3, 'Sofia', 'Martin', 'Montreal', 'QC', '2025-03-22'),
-(4, 'Noah', 'Campbell', 'Vancouver', 'BC', '2025-04-09'),
-(5, 'Avery', 'Wilson', 'Calgary', 'AB', '2025-05-16'),
-(6, 'Leila', 'Roy', 'Ottawa', 'ON', '2025-06-01'),
-(7, 'Theo', 'Brown', 'Halifax', 'NS', '2025-07-28'),
-(8, 'Amara', 'Patel', 'Burlington', 'ON', '2025-08-13'),
-(9, 'Felix', 'Tremblay', 'Quebec City', 'QC', '2025-09-05'),
-(10, 'Nina', 'Brooks', 'Victoria', 'BC', '2025-10-19'),
-(11, 'Rowan', 'Lee', 'Hamilton', 'ON', '2025-11-08'),
-(12, 'Ivy', 'Khan', 'Toronto', 'ON', '2026-01-12');
+(501, 'Dr. Mira Patel', 'Family Medicine', 'Hamilton'),
+(502, 'Dr. Adrian Chen', 'Internal Medicine', 'Toronto'),
+(503, 'Dr. Samira Roy', 'Gynecology', 'Ottawa'),
+(504, 'Dr. Lucas Martin', 'Family Medicine', 'Montreal'),
+(505, 'Dr. Avery Brooks', 'Internal Medicine', 'Vancouver');
 
-INSERT INTO products
-(product_id, product_name, category, unit_price)
+INSERT INTO patients
+(patient_id, age, sex, province)
 VALUES
-(101, 'Trail Bottle', 'Outdoors', 24.00),
-(102, 'Merino Base Layer', 'Apparel', 89.00),
-(103, 'Climbing Chalk Bag', 'Climbing', 32.00),
-(104, 'Resistance Band Set', 'Training', 28.00),
-(105, 'Travel Mug', 'Lifestyle', 35.00),
-(106, 'Day Pack', 'Outdoors', 119.00),
-(107, 'Yoga Mat', 'Training', 72.00),
-(108, 'Insulated Vest', 'Apparel', 145.00);
+(1, 71, 'M', 'ON'),
+(2, 58, 'F', 'ON'),
+(3, 56, 'M', 'ON'),
+(4, 69, 'F', 'QC'),
+(5, 24, 'M', 'BC'),
+(6, 51, 'F', 'ON'),
+(7, 29, 'M', 'ON'),
+(8, 46, 'F', 'ON'),
+(9, 48, 'M', 'QC'),
+(10, 64, 'F', 'BC'),
+(11, 26, 'M', 'ON'),
+(12, 29, 'F', 'ON'),
+(13, 47, 'M', 'ON'),
+(14, 66, 'F', 'QC'),
+(15, 34, 'M', 'BC'),
+(16, 53, 'F', 'ON'),
+(17, 67, 'M', 'ON'),
+(18, 27, 'F', 'ON'),
+(19, 37, 'M', 'QC'),
+(20, 69, 'F', 'BC'),
+(21, 53, 'M', 'ON'),
+(22, 71, 'F', 'ON'),
+(23, 49, 'M', 'ON'),
+(24, 32, 'F', 'QC'),
+(25, 64, 'M', 'BC'),
+(26, 62, 'F', 'ON'),
+(27, 59, 'M', 'ON'),
+(28, 70, 'F', 'ON'),
+(29, 45, 'M', 'QC'),
+(30, 53, 'F', 'BC'),
+(31, 72, 'M', 'ON'),
+(32, 64, 'F', 'ON'),
+(33, 72, 'M', 'ON'),
+(34, 57, 'F', 'QC'),
+(35, 47, 'M', 'BC'),
+(36, 43, 'F', 'ON'),
+(37, 70, 'M', 'ON'),
+(38, 72, 'F', 'ON'),
+(39, 34, 'M', 'QC'),
+(40, 51, 'F', 'BC');
 
-INSERT INTO orders
-(order_id, customer_id, order_date, status)
+INSERT INTO lab_tests
+(test_id, patient_id, order_id, collection_date, disease_status, biomarker_a, biomarker_b, biomarker_c)
 VALUES
-(1001, 1, '2026-01-05', 'completed'),
-(1002, 2, '2026-01-08', 'completed'),
-(1003, 1, '2026-02-14', 'completed'),
-(1004, 3, '2026-02-20', 'cancelled'),
-(1005, 4, '2026-03-03', 'completed'),
-(1006, 5, '2026-03-09', 'completed'),
-(1007, 6, '2026-03-21', 'completed'),
-(1008, 2, '2026-04-02', 'completed'),
-(1009, 8, '2026-04-18', 'completed'),
-(1010, 9, '2026-05-05', 'completed'),
-(1011, 10, '2026-05-29', 'refunded'),
-(1012, 11, '2026-06-04', 'completed'),
-(1013, 1, '2026-06-18', 'completed'),
-(1014, 12, '2026-07-07', 'completed'),
-(1015, 4, '2026-07-24', 'completed'),
-(1016, 6, '2026-08-11', 'completed'),
-(1017, 8, '2026-08-30', 'completed'),
-(1018, 2, '2026-09-04', 'completed');
+('T0001', 1, 501, '2026-01-05', 'control', 29.25, 27.32, 27.91),
+('T0002', 2, 502, '2026-01-10', 'control', 31.28, 31.48, 30.76),
+('T0003', 3, 503, '2026-01-15', 'control', 31.75, 29.32, 29.99),
+('T0004', 4, 504, '2026-01-20', 'control', 29.91, 24.92, 26.20),
+('T0005', 5, 505, '2026-01-25', 'control', 27.83, 24.96, 28.84),
+('T0006', 6, 501, '2026-01-30', 'control', 32.75, 27.89, 26.67),
+('T0007', 7, 502, '2026-02-04', 'control', 28.85, 29.17, 30.47),
+('T0008', 8, 503, '2026-02-09', 'control', 29.02, 25.88, 29.88),
+('T0009', 9, 504, '2026-02-14', 'control', 26.14, 24.72, 27.79),
+('T0010', 10, 505, '2026-02-19', 'control', 26.65, 29.85, 29.23),
+('T0011', 11, 501, '2026-02-24', 'control', 26.09, 24.03, 24.61),
+('T0012', 12, 502, '2026-03-01', 'control', 27.85, 25.25, 24.40),
+('T0013', 13, 503, '2026-03-06', 'control', 32.56, 23.37, 26.12),
+('T0014', 14, 504, '2026-03-11', 'control', 31.40, 29.17, 30.28),
+('T0015', 15, 505, '2026-03-16', 'control', 29.00, 34.34, 26.07),
+('T0016', 16, 501, '2026-03-21', 'control', 26.96, 25.75, 27.79),
+('T0017', 17, 502, '2026-03-26', 'control', 24.33, 33.61, 26.09),
+('T0018', 18, 503, '2026-03-31', 'control', 27.24, 25.65, 32.17),
+('T0019', 19, 504, '2026-04-05', 'control', 29.68, 28.51, 27.38),
+('T0020', 20, 505, '2026-04-10', 'control', 31.34, 30.90, 26.45),
+('T0021', 21, 501, '2026-04-15', 'disease', 24.42, 31.55, 23.63),
+('T0022', 22, 502, '2026-04-20', 'disease', 29.05, 28.76, 29.31),
+('T0023', 23, 503, '2026-04-25', 'disease', 24.06, 26.98, 23.41),
+('T0024', 24, 504, '2026-04-30', 'disease', 23.20, 21.56, 35.00),
+('T0025', 25, 505, '2026-05-05', 'disease', 24.75, 27.73, 29.40),
+('T0026', 26, 501, '2026-05-10', 'disease', 26.14, 30.07, 31.52),
+('T0027', 27, 502, '2026-05-15', 'disease', 27.97, 28.87, 31.39),
+('T0028', 28, 503, '2026-05-20', 'disease', 25.73, 28.07, 27.90),
+('T0029', 29, 504, '2026-05-25', 'disease', 29.55, 31.64, 28.22),
+('T0030', 30, 505, '2026-05-30', 'disease', 21.69, 30.09, 29.99),
+('T0031', 31, 501, '2026-06-04', 'disease', 29.64, 27.89, 26.88),
+('T0032', 32, 502, '2026-06-09', 'disease', 20.00, 30.48, 33.37),
+('T0033', 33, 503, '2026-06-14', 'disease', 24.77, 31.61, 27.04),
+('T0034', 34, 504, '2026-06-19', 'disease', 24.93, 31.46, 33.67),
+('T0035', 35, 505, '2026-06-24', 'disease', 28.63, 25.95, 26.94),
+('T0036', 36, 501, '2026-06-29', 'disease', 25.88, 31.62, 24.81),
+('T0037', 37, 502, '2026-07-04', 'disease', 25.92, 29.87, 27.24),
+('T0038', 38, 503, '2026-07-09', 'disease', 25.40, 26.74, 28.29),
+('T0039', 39, 504, '2026-07-14', 'disease', 24.58, 27.50, 24.82),
+('T0040', 40, 505, '2026-07-19', 'disease', 20.90, 27.26, 33.45);
 
-INSERT INTO order_items
-(order_item_id, order_id, product_id, quantity, unit_price)
-VALUES
-(1, 1001, 101, 2, 24.00),
-(2, 1001, 105, 1, 35.00),
-(3, 1002, 103, 1, 32.00),
-(4, 1002, 104, 2, 28.00),
-(5, 1003, 106, 1, 119.00),
-(6, 1004, 107, 1, 72.00),
-(7, 1005, 102, 1, 89.00),
-(8, 1005, 101, 1, 24.00),
-(9, 1006, 108, 1, 145.00),
-(10, 1007, 107, 1, 72.00),
-(11, 1007, 104, 1, 28.00),
-(12, 1008, 105, 2, 35.00),
-(13, 1009, 103, 1, 32.00),
-(14, 1009, 101, 1, 24.00),
-(15, 1010, 106, 1, 119.00),
-(16, 1011, 108, 1, 145.00),
-(17, 1012, 104, 3, 28.00),
-(18, 1013, 102, 1, 89.00),
-(19, 1013, 105, 1, 35.00),
-(20, 1014, 107, 1, 72.00),
-(21, 1014, 101, 2, 24.00),
-(22, 1015, 106, 1, 119.00),
-(23, 1016, 103, 2, 32.00),
-(24, 1017, 108, 1, 145.00),
-(25, 1018, 104, 1, 28.00),
-(26, 1018, 105, 1, 35.00);
+CREATE INDEX idx_lab_tests_patient_id
+    ON lab_tests(patient_id);
 
-CREATE INDEX idx_orders_customer_id
-    ON orders(customer_id);
+CREATE INDEX idx_lab_tests_order_id
+    ON lab_tests(order_id);
 
-CREATE INDEX idx_order_items_order_id
-    ON order_items(order_id);
+CREATE INDEX idx_lab_tests_disease_status
+    ON lab_tests(disease_status);
 
-CREATE INDEX idx_order_items_product_id
-    ON order_items(product_id);
+CREATE INDEX idx_lab_tests_biomarker_a
+    ON lab_tests(biomarker_a);
