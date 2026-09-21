@@ -1,21 +1,43 @@
 # Building SQL Course
 
-A hands-on SQL learning repo using SQLite and a fully synthetic retail database.
+A hands-on SQL learning repo using SQLite and a **fully synthetic diagnostic-laboratory database**.
 
-## What is in the database?
+Think: a simplified LifeLabs-style data environment built for learning SQL. No record represents a real patient, physician, or laboratory result.
 
-The practice database contains four related tables:
+## Database structure
 
-- `customers` — customer demographics and signup dates
-- `products` — product catalogue and pricing
-- `orders` — order-level records
-- `order_items` — line items connecting orders to products
+The practice database contains three related tables:
 
-All names and records are synthetic.
+- `patients` — synthetic patient demographics
+- `ordering_doctors` — synthetic ordering physicians
+- `lab_tests` — one test record per patient with biomarker results and disease status
+
+The core test table contains:
+
+- `test_id`
+- `patient_id`
+- `order_id` — identifies the ordering physician in this teaching dataset
+- `collection_date`
+- `disease_status`
+- `biomarker_a`
+- `biomarker_b`
+- `biomarker_c`
+
+All biomarker values are numeric and constrained to **20–35**.
+
+### Intentional signal
+
+This is not random noise. The dataset was designed so that:
+
+- **Biomarker A is associated with disease status**: disease cases tend to have lower values.
+- Biomarkers B and C have much more overlap between cases and controls.
+- The Biomarker A relationship is deliberately imperfect, so threshold-based analyses produce false positives and false negatives.
+
+That makes the dataset useful later for practicing diagnostic-style analyses.
 
 ## Start in GitHub Codespaces
 
-Open this repo in a Codespace. The dev container will install SQLite and automatically build:
+Open this repo in a Codespace. The dev container installs SQLite and automatically builds:
 
 ```
 practice.db
@@ -27,25 +49,33 @@ from:
 data/create_database.sql
 ```
 
-To open the database manually:
+If your Codespace was already open before the database changed, rebuild it manually:
+
+```bash
+rm -f practice.db
+sqlite3 practice.db < data/create_database.sql
+```
+
+Open SQLite:
 
 ```bash
 sqlite3 practice.db
 ```
 
-Useful SQLite commands:
+Then:
 
 ```sql
 .tables
-.schema customers
 .headers on
 .mode column
 ```
 
-Then try:
+Try:
 
 ```sql
-SELECT * FROM customers;
+SELECT *
+FROM lab_tests
+LIMIT 10;
 ```
 
 ## Learning path
@@ -53,12 +83,12 @@ SELECT * FROM customers;
 1. SELECT + LIMIT
 2. WHERE + filtering
 3. ORDER BY
-4. COUNT / SUM / AVG
+4. COUNT / AVG / MIN / MAX
 5. GROUP BY
-6. JOIN
+6. JOIN patient, test, and ordering-provider tables
 7. CASE WHEN
-8. Subqueries + CTEs
-9. Window functions
-10. Analytics-style questions
+8. Diagnostic thresholds
+9. Subqueries + CTEs
+10. Window functions and analytics-style questions
 
 Start with `exercises/01_basics.sql`.
